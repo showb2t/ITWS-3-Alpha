@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<title>Landing Page</title>
+
+{% load staticfiles %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{% static 'polls/css/w3.css' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg {
+    background-image: url('{% static 'polls/img/W5.jpg' %}');
+    min-height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+</style>
+<body>
+
+<div class="bgimg w3-display-container w3-animate-opacity w3-text-white" style="animation-fill-mode: backwards;">
+  <div class="w3-display-topleft w3-padding-large w3-xlarge w3-animate-opacity" style="animation:opac 1.4s;animation-delay: 5.3s;animation-fill-mode: backwards;">
+    Group 16
+  </div>
+  <div class="w3-display-middle">
+    <h1 class="w3-jumbo w3-animate-opacity" style="animation:opac 2.1s;animation-delay: 0.8s;animation-fill-mode: backwards;">PLANT CARE</h1>
+    <hr class="w3-border-green w3-animate-opacity" style="border-width: 3px;margin:auto;width:65%;animation:opac 1.8s;animation-delay: 1.8s;animation-fill-mode: backwards;">
+    <p class="w3-large w3-center w3-animate-opacity" style="animation:opac 1.9s;animation-delay: 2.9s;animation-fill-mode: backwards;">A web-app for taking care of your plants.</p>
+    <br><br><center><a href="{% url 'users:login' %}"><button  class="button button1 w3-animate-opacity" style="animation:opac 1.4s;animation-delay: 4.9s;animation-fill-mode: backwards;">Dive in</button></a></center>
+  </div>
+  
+  <div class="w3-display-bottomleft w3-padding-large">
+    Alpha Version </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+
+<html>
+<head>
+   <!-- <meta http-equiv="refresh" content="5" >-->
+    <title>Graphs</title>
+
+   <style type="text/css">
+
+
+      .box {
+            background: #ffffff;
+            border-radius: 2px;
+            display: inline-block;
+            margin: 1rem;
+        }
+
+        .temp-box {
+           width: 90%;
+           background: #eceff1;
+            height: 550px;
+            position: relative;
+            overflow: scroll;
+            box-shadow: 0 19px 38px rgba(13,71,161 ,0.60);
+            margin-top: 5rem;
+        }
+
+        #topbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            top: 0;
+            width: 100%;
+            height: 40%;
+            position: fixed;
+            overflow: hidden;
+            background-color: #01579b;
+        }
+
+        li a {
+            display: block;
+            color: black;
+            size: 15px;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        #navli {
+            float: left;
+            padding: 2px;
+        }
+
+
+
+   </style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+</head>
+<body>
+
+
+ <ul class="shadow" id="topbar">
+      <li id="navli" class="box "><a href="#home">HOME</a></li>
+    </ul>
+
+    <center>
+   <div class="box temp-box">
+      <h1 style="color: #37474f;"> TEMPERATURE READINGS </h1>
+      <div id="temp_chart" style="width: 900px; height: 500px"></div>
+
+
+        <h1 style="color: #37474f;"> WATER-LEVEL VALUES </h1>
+      <div id="WaterLevel_chart" style="width: 900px; height: 500px"></div>
+
+
+        <h1 style="color: #37474f;"> SOIL MOISTURES </h1>
+      <div id="SoilMoisture_chart" style="width: 900px; height: 500px"></div>
+
+
+   </div>
+
+   </center>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+
+      google.charts.setOnLoadCallback(drawTempChart);
+      google.charts.setOnLoadCallback(drawWaterLevelChart);
+      google.charts.setOnLoadCallback(drawSoilMoistureChart);
+      
+      function drawTempChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Temperature'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for temps in latest_temp_list %}
+            data.addRow(['17',{{temps.temp}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'linear',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Recent Temperature',
+          vAxis: {title: "Temperature"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          <!--curveType: 'function',>
+
+          legend: { position: 'top' },
+          colors: ['#FF671C']
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('temp_chart'));
+
+        chart.draw(data, options);
+
+
+      }
+
+
+      <!-- window.setInterval(drawTempChart, 3000);-->
+
+      function drawWaterLevelChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Water Level'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for f in water_l%}
+            data.addRow(['17',{{f.level}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'out',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Water Level',
+          vAxis: {title: "Water Level"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          curveType: 'function',
+
+          legend: { position: 'top' },
+          colors: ['#1CD6FF']
+
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('WaterLevel_chart'));
+
+        chart.draw(data, options);
+
+
+      }
+      function drawSoilMoistureChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Soil Moisture'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for q in soil_m_l%}
+            data.addRow(['17',{{q.m_level}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'in',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Soil Moisture',
+          vAxis: {title: "Soil Moisture"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          <!--curveType: 'function',>
+
+          legend: { position: 'top' },
+          colors: ['#3BFC1C']
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('SoilMoisture_chart'));
+
+        chart.draw(data, options);
+
+      }
+
+      
+
+    </script>
+   </body>
+
+
+</html>

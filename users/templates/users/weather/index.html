@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% load staticfiles %}
+	<title>
+	Weather Monitoring Real Time
+	</title>
+	<style type="text/css">
+/* CSS goes here */
+#wxWrap {
+    width: 350px;
+    background: #EEE; /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(240,240,240,1) 0%, rgba(224,224,224,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,240,240,1)), color-stop(100%,rgba(224,224,224,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#e0e0e0',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* W3C */
+    padding: 2px 13px 2px 11px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+#wxIntro {
+    display: inline-block;
+    font: 14px/20px Arial,Verdana,sans-serif;
+    color: #666;
+    vertical-align: top;
+    padding-top: 9px;
+}
+#wxIcon {
+    display: inline-block;
+    width: 250px;
+    height: 250px;
+    margin: 4px 0 -1px 1px;
+    overflow: hidden;
+    background: url('http://l.yimg.com/a/lib/ywc/img/wicons.png') no-repeat 100px 0;
+}
+#wxIcon2 {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin: 1px 6px 0 8px;
+    overflow: hidden;
+}
+#wxTemp {
+    display: inline-block;
+    font: 55px/28px Arial,Verdana,sans-serif;
+    color: Orange;
+    vertical-align: top;
+    padding-top: 5px;
+    margin-left: 0;
+}
+</style>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1">
+		
+		<title>Compass Starter by Ariona, Rian</title>
+
+		<!-- Loading third party fonts -->
+		<link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
+		<link href="fonts/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+		<!-- Loading main css file -->
+		<link rel="stylesheet" href="{% static 'users/style.css' %}">
+		
+		<!--[if lt IE 9]>
+		<script src="{% static 'users/weather/js/ie-support/html5.js' %}"></script>
+		<script src="{% static 'users/weather/js/ie-support/respond.js' %}"></script>
+		<![endif]-->
+
+	</head>
+
+
+	<body>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		$(function(){
+
+			// Specify the ZIP/location code and units (f or c)
+			var loc = '55934829'; // or e.g. SPXX0050
+			var u = 'c';
+
+			var query = "SELECT item.condition FROM weather.forecast WHERE woeid='" + loc + "' AND u='" + u + "'";
+			var cacheBuster = Math.floor((new Date().getTime()) / 1200 / 1000);
+			var url = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(query) + '&format=json&_nocache=' + cacheBuster;
+
+			window['wxCallback'] = function(data) {
+				var info = data.query.results.channel.item.condition;
+				$('#wxIcon').css({
+					backgroundPosition: '-' + (61 * info.code) + 'px 0'
+				}).attr({
+					title: info.text
+				});
+				$('#wxIcon2').append('<img src="http://l.yimg.com/a/i/us/we/52/' + info.code + '.gif" width="34" height="34" title="' + info.text + '" />');
+				$('#wxTemp').html(info.temp + '&deg;' + (u.toUpperCase()));
+			};
+
+			$.ajax({
+				url: url,
+				dataType: 'jsonp',
+				cache: true,
+				jsonpCallback: 'wxCallback'
+			});
+			
+		});
+		</script>
+		
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script>
+		
+		function getWeather(woeid, unit) {
+		var url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid=" + woeid + " %20and%20u=%27" + unit +"%27&format=json&callback=cbfunc";
+		$.getScript(url, function(data) {  } );
+		}
+
+		window.cbfunc = function(data){
+		var forecast='';
+		forecast = "<br>" + data.query.results.channel.item.description + "<br>";
+		var wind_spped='';
+		wind_spped="<br>"+data.query.results.channel.wind.speed+"<br>";
+		var rain='';
+		rain=""+ data.query.results.channel.atmosphere.humidity+"";
+		var dir='';
+		dir= ""+data.query.results.channel.wind.direction+"";
+		$("#weather").append(forecast);
+		$("#wind_1").append(wind_spped);
+		$("#rain_p").append(rain);
+		$("#dir_1").append(dir);
+		 
+		 
+		};
+
+
+		getWeather(55934829, "c");
+		
+		</script>
+		
+				
+<script src="https://query.yahooapis.com/v1/public/yql?q=select wind from weather.forecast where woeid in (select woeid from geo.places(1) where text='chicago, il')&format=json&callback=callbackFunction"></script>
+		<div class="site-content">
+			<div class="site-header">
+				<div class="container">
+					<a href="{% url 'users:weather' %}" class="branding">
+						<img src="{% static 'users/weather/images/logo.jpg' %}" alt="" class="logo" height=60>
+						<div class="logo-type">
+							<h1 class="site-title">Indian Institute Of Information Technology , Sri City</h1>
+							<small class="site-description">Plant Watering System</small>
+						</div>
+					</a>
+
+					<!-- Default snippet for navigation -->
+					<div class="main-navigation">
+						<button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+						<ul class="menu">
+							<li class="menu-item current-menu-item"><a href="{% url 'users:weather' %}">Home</a></li>
+							
+							<li class="menu-item"><a href="{% url 'users:contact' %}">Contact</a></li>
+						</ul> <!-- .menu -->
+					</div> <!-- .main-navigation -->
+
+					<div class="mobile-navigation"></div>
+
+				</div>
+			</div> <!-- .site-header -->
+
+			<div class="hero" data-bg-image="{% static 'users/weather/images/banner.png' %}">
+				<div class="container">
+					<form action="#" class="find-location">
+						<input type="text" placeholder="Find your location...">
+						<input type="submit" value="Find">
+					</form>
+
+				</div>
+			</div>
+			
+			<div class="forecast-table">
+				<div class="container">
+					<div class="forecast-container">
+						<div class="today forecast">
+							<div class="forecast-header">
+								<div class="day" id="demo"></div>
+								<div class="date" id="demo1"></div> 
+								<div class="date" id="demo2"></div> 
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="location">Sri City</div>
+								<div class="degree">
+									<span id="wxTemp"><sup>o</sup>C</span>
+									
+										<span id="wxIcon2" ></span>
+									
+								</div>
+								<div><img src="{% static 'users/weather/images/icon-umberella.png' %}" ><br><p id="rain_p"></p></div>
+								 <div><img src="{% static 'users/weather/images/icon-wind.png' %}"><p id="wind_1"></p></div>
+								<div><img src="{% static 'users/weather/images/icon-compass.png' %}" ><br><p id="dir_1"></p></div>
+								<div id="weather"></div>
+							</div>
+								<script>
+								var d = new Date();
+								var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+								var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+								document.getElementById("demo").innerHTML = days[d.getDay()];
+								document.getElementById("demo1").innerHTML = d.getUTCDate();
+								document.getElementById("demo2").innerHTML = months[d.getUTCMonth()]+" "+",";
+								</script>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Tuesday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-3.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Wednesday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-5.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Thursday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-7.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Friday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-12.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Saturday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-13.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+						<div class="forecast">
+							<div class="forecast-header">
+								<div class="day">Sunday</div>
+							</div> <!-- .forecast-header -->
+							<div class="forecast-content">
+								<div class="forecast-icon">
+									<img src="{% static 'users/weather/images/icons/icon-14.svg' %}" alt="" width=48>
+								</div>
+								<div class="degree">23<sup>o</sup>C</div>
+								<small>18<sup>o</sup></small>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<main class="main-content">
+				<div class="fullwidth-block">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-4">
+								<h2 class="section-title">Application features</h2>
+								<ul class="arrow-feature">
+									<li>
+										<h3>Rainfall Distribution</h3>
+										<p>Used to know about the probability of rainfall in the selected area and adjust water supply to plant accordingly.</p>
+									</li>
+									<li>
+										<h3>Weather humidity</h3>
+										<p>Get readings about weather humidity and use it compare with the ideal values required for the plant.</p>
+									</li>
+									<li>
+										<h3>Wind speed</h3>
+										<p>Gives an idea about current weather conditions such as calm weather or stormy weather.</p>
+									</li>
+								</ul>
+							</div>
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</main> <!-- .main-content -->
+
+			<footer class="site-footer">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-8">
+							<form action="#" class="subscribe-form">
+								<input type="text" placeholder="Enter your email to subscribe...">
+								<input type="submit" value="Subscribe">
+							</form>
+						</div>
+						<div class="col-md-3 col-md-offset-1">
+							<div class="social-links">
+								<a href="https://www.facebook.com/IIIT.SriCity/" target="blank"><i class="fa fa-facebook"></i></a>
+							</div>
+						</div>
+					</div>
+
+					<p class="colophon">Group@16</p>
+				</div>
+			</footer> <!-- .site-footer -->
+		</div>
+		
+		<script src="{% static 'users/weather/js/jquery-1.11.1.min.js' %}"></script>
+		<script src="{% static 'users/weather/js/plugins.js' %}"></script>
+		<script src="{% static 'users/weather/js/app.js' %}"></script>
+		
+	</body>
+
+</html>
